@@ -1,23 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
+import WishButton from "./components/WishButton";
+import DormCard from "./components/DormCard";
+import DormList from "./components/DormList";
+import TestWishButton from "./testComponents/TestWishButton";
+import TestCard from "./testComponents/TestCard"
+import TestList from "./testComponents/TestList"
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <TestWishButton/>
+        <TestCard/>
+        <TestList/>
     </div>
   );
 }
