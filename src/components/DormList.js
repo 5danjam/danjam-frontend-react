@@ -8,18 +8,32 @@ const DormList = ({filters} = {}) => {
     // 위시한테 값 넘겨주기
     const [isWish, setIsWish] = useState(false);
     const toggleWish = async (dormId) => {
-        setIsWish(prevState => !prevState);
         try {
+            setDorms(prevDorms =>
+                prevDorms.map(dorm =>
+                    dorm.id === dormId
+                        ? { ...dorm, isWish: !dorm.isWish }
+                        : dorm
+                )
+            );
+
+            const targetDorm = dorms.find(dorm => dorm.id === dormId);
             /** User 값 받아서 로그인 한 상태면 위시로 넘겨주고, 로그인되지 않았으면 로그인 창으로 넘겨주기
              */
-            if (isWish) {
+            if (targetDorm.isWish) {
                 await axios.delete(`http://localhost:8080/wish/${dormId}`, {withCredentials: true});
             } else {
                 await axios.get(`http://localhost:8080/wish/${dormId}`, {}, {withCredentials: true});
             } // 위시리스트 매핑 설정 @영우
         } catch (e) {
             console.error("찜 상태 변경 중 오류 발생", e);
-            setIsWish((prevState) => !prevState)
+            setDorms(prevDorms =>
+                prevDorms.map(dorm =>
+                    dorm.id === dormId
+                        ? { ...dorm, isWish: !dorm.isWish }
+                        : dorm
+                )
+            );
         }
     };
 
@@ -43,11 +57,11 @@ const DormList = ({filters} = {}) => {
                 // 나중에 검색 필터에 맞게 수정하기 @도희
                 page: page,
                 size: size,
-                city: filters.city || '',
-                person: filters.person || '',
-                minPrice: filters.minPrice || '',
-                maxPrice: filters.maxPrice || '',
-                type: filters.type || ''
+                ...(filters.city && { city: filters.city }),
+                ...(filters.person && { person: filters.person }),
+                ...(filters.minPrice && { minPrice: filters.minPrice }),
+                ...(filters.maxPrice && { maxPrice: filters.maxPrice }),
+                ...(filters.type && { type: filters.type })
             }).toString();
 
             console.log("검색에서 생성된 params 확인: ", params);
@@ -84,7 +98,7 @@ const DormList = ({filters} = {}) => {
                     key={dorm.id}
                     dorm={dorm}
                     isWish={isWish}
-                    toggleWish={toggleWish(dorm.id)}
+                    toggleWish={() => toggleWish(dorm.id)}
                 />
             ))}
             {hasMore && (
