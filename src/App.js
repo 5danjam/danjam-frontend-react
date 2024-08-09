@@ -9,9 +9,7 @@ import TestList from "./testComponents/TestList"
 function App() {
   return (
     <div className="App">
-      <TestWishButton/>
-        <TestCard/>
-        <TestList/>
+      <DormList/>
     </div>
   );
 }

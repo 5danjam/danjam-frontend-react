@@ -19,7 +19,7 @@ const Button = styled.div`
 
 
 const WishButton = ({ isWish, toggleWish }) => (
-    <Button onClick={toggleWish} isWish={isWish}>
+    <Button onClick={toggleWish} className={isWish ? 'wish-active' : 'wish-inactive'}>
         {isWish ? <FaHeart /> : <FaRegHeart />}
     </Button>
 );

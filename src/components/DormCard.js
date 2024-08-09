@@ -98,8 +98,8 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
             onMouseLeave={() => setIsHovered(false)}
             >
                 {images.length > 0 ? (
-                    <Image src={images[currentImageIndex].name} alt={`룸이미지 ${currentImageIndex + 1}`}/>
-                ) : (
+                    <Image src={'http://localhost:8080/uploads/' + images[currentImageIndex].name + '.'
+                        + images[currentImageIndex].ext} alt={`룸이미지 ${currentImageIndex + 1}`}/>                ) : (
                     <Image src="/호텔샘플.png" alt="기본 이미지"/>
                 )}
                 {!isHovered && images.length > 1 && (
