@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import TestWishButton from './TestWishButton';
 import { FaStar } from "react-icons/fa";
 import styled from "styled-components";
-import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
+import {
+    IoIosArrowDropleft,
+    IoIosArrowDropleftCircle,
+    IoIosArrowDropright,
+    IoIosArrowDroprightCircle
+} from "react-icons/io";
 
 const CardContainer = styled.div`
     position: relative;
@@ -32,14 +37,18 @@ const NavButton = styled.button`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
     color: white;
+    background: none;
     border: none;
-    font-size: 18px;
+    font-size: 30px;
     cursor: pointer;
-    padding: 5px;
+    padding: 0;
     opacity: 0;
     transition: opacity 0.3s;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 
     &:hover {
         opacity: 1;
@@ -93,10 +102,10 @@ const TestCard = ({ dorm = {}, isWish, toggleWish }) => {
                 {isHovered && images.length > 1 && (
                     <>
                         <NavButton left onClick={prevImage}>
-                            <IoIosArrowDropleft />
+                            <IoIosArrowDropleftCircle />
                         </NavButton>
                         <NavButton right onClick={nextImage}>
-                            <IoIosArrowDropright />
+                            <IoIosArrowDroprightCircle />
                         </NavButton>
                     </>
                 )}

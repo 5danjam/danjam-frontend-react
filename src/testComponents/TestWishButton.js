@@ -7,7 +7,7 @@ const Button = styled.div`
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
     color: ${props => (props.isWish ? 'red' : 'gray')};
     transition: transform 0.2s ease-in-out;

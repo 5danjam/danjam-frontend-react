@@ -7,7 +7,6 @@ const DormList = () => {
     // 위시한테 값 넘겨주기
     const [isWish, setIsWish] = useState(false);
     const toggleWish = async (dormId) => {
-
         setIsWish(prevState => !prevState);
         try {
             /** User 값 받아서 로그인 한 상태면 위시로 넘겨주고, 로그인되지 않았으면 로그인 창으로 넘겨주기
@@ -22,27 +21,30 @@ const DormList = () => {
             setIsWish((prevState) => !prevState)
         }
     };
+
     // 무한스크롤
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const size = 40; // 에어비앤비 기준
 
     const loadMoreDorms = () => {
         setPage((prevPage) => prevPage + 1);
     }
 
+
     // 호텔 리스트
     const [dorms, setDorms] = useState([]);
 
-    const getDorms = async (page) => {
+    const getDorms = async (page, size) => {
         try {
-            const resp = await axios.get("http://localhost:8080/dorm/" + page);
+            const resp = await axios.get(`http://localhost:8080/dorm?page=${page}&size=${size}`);
             console.log("데이터가 있나요?", resp.data);
-            const newDorms = resp.data;
+            const newDorms = resp.data.content;
             setDorms((prevDorms) =>
                 [...prevDorms, ...newDorms]
             );
-            if (newDorms.length === 0) {
+            if (resp.data.totalpages) {
                 setHasMore(false);
             }
         } catch (e) {
@@ -50,9 +52,8 @@ const DormList = () => {
         }
     };
 
-
     useEffect(() => {
-        getDorms(page)
+        getDorms(page, size)
     }, [page]);
 
     return (
@@ -61,7 +62,7 @@ const DormList = () => {
                 <DormCard
                 key={dorm.id}
                 dorm={dorm}
-                isWish={false}
+                isWish={isWish}
                 toggleWish={toggleWish}
                 />
             ))}
@@ -70,6 +71,7 @@ const DormList = () => {
                     더보기
                 </button>
             )}
+            {/* !hasMore 일 경우 마지막 더 불러올 리스트가 없습니다 메시지 추가 */}
         </div>
     );
 };

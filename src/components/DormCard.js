@@ -33,14 +33,18 @@ const NavButton = styled.button`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
     color: white;
+    background: none;
     border: none;
-    font-size: 18px;
+    font-size: 30px;
     cursor: pointer;
-    padding: 5px;
+    padding: 0;
     opacity: 0;
     transition: opacity 0.3s;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 
     &:hover {
         opacity: 1;
@@ -62,6 +66,7 @@ const InfoContainer = styled.div`
 
 const DormCard = ({dorm, isWish, toggleWish}) => {
     console.log("dorm: ", dorm)
+    const originalPrice = dorm.minPrice + (dorm.minPrice / 4);
 
     // 위시리스트 버튼에 넘겨줄 값들
 
@@ -71,10 +76,8 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
-    const images = dorm?.images || [];
+    const images = dorm.roomImages || [];
     // dorm.images 없어도 실행 가능한 코드
-
-
 
     const nextImage = () => {
         setCurrentImageIndex((prevIndex) =>
@@ -95,7 +98,7 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
             onMouseLeave={() => setIsHovered(false)}
             >
                 {images.length > 0 ? (
-                    <Image src={images[currentImageIndex].name} alt={`호텔 이미지 ${currentImageIndex + 1}`}/>
+                    <Image src={images[currentImageIndex].name} alt={`룸이미지 ${currentImageIndex + 1}`}/>
                 ) : (
                     <Image src="/호텔샘플.png" alt="기본 이미지"/>
                 )}
@@ -115,12 +118,14 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
                 <h3 style={{margin: '5px 0'}}>{dorm.name}</h3>
                 {/* 잊지 말고 호텔이름이랑 호텔설명에 마진값 주기 */}
                 <p style={{margin: '0 0 10px'}}>{dorm.description}</p>
+                {/* 조건부 렌더링으로 불러온 객체에 기간에 관련된 데이터 존재하면 띄워주기 */}
                 <div>
-                    <span style={{textDecoration: 'line-through', color: '#999'}}>{dorm.price} 원</span>
-                    <span style={{color: '#e53935', marginLeft: '10px'}}>{dorm.totalPrice} 원</span>
+                    <span style={{textDecoration: 'line-through', color: '#999'}}>{originalPrice} 원</span>
+                    <span style={{color: '#e53935', marginLeft: '10px'}}>{dorm.minPrice} 원</span>
                 </div>
                 <div style={{color: '#fbc02d'}}>
-                    <FaStar/> {dorm.rating}
+                    {/* 조건부 렌더링으로 rating 값이 없으면 첫 리뷰를 달아주세요 띄워주기 */}
+                    <FaStar/> {dorm.averageRating}
                 </div>
             </InfoContainer>
         </CardContainer>
