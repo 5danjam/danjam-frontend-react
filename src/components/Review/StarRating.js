@@ -7,7 +7,7 @@ const StarRating = ({ rate }) => {
     const halfStar = rate % 1 !== 0;
 
     return (
-        <div className="star-rating">
+        <div className="starRating">
             {[...Array(fullStars)].map((_, index) => (
                 <span key={index}><FaStar /></span>
             ))}
