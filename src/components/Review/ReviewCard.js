@@ -1,8 +1,58 @@
 import {useState} from "react";
-import ReviewModal from "./ReviewModal";
+import ReviewListModal from "./ReviewListModal";
 import StarRating from "./StarRating";
+import styled from "styled-components";
 
-const ReviewCard = ({review}) => {
+const ReviewCardContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-width: 350px;
+    background-color: white;
+    margin-bottom: 20px;
+`;
+
+const UserInfo = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+`;
+
+const UserName = styled.p`
+    font-weight: bold;
+    margin: 0;
+`;
+
+const ReviewDetails = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+`;
+
+const ReviewDate = styled.p`
+    color: #777;
+    font-size: 14px;
+    margin-left: 8px;
+`;
+
+const ReviewContent = styled.p`
+    margin-top: 12px;
+    line-height: 1.4;
+`;
+
+const MoreButton = styled.button`
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    padding: 0;
+    font-size: 14px;
+    margin-top: 8px;
+`;
+
+const ReviewCard = ({review, hasmore = {}}) => {
 
     const maxLength = 100;
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,20 +61,30 @@ const ReviewCard = ({review}) => {
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <div className="review-card">
-            <p>{review.username}</p>
-            <div className='ReviewContainer'>
-                <div style={{ display: 'inline-block'}}> <StarRating rate={review.rate}/> </div>
-                <span> {review.rate} </span>
-            </div>
-            <p>{review.content.length > maxLength ? review.content.slice(0, 100) + '...' : review.content}</p>
-            {review.content.length > maxLength && (
-                <button onClick={openModal}>더보기</button>
-            )}
-            {isModalOpen && (
-                <ReviewModal review={review} closeModal={closeModal} />
-            )}
-        </div>
+            <ReviewCardContainer>
+                <UserInfo>
+                    <div>
+                        <UserName>{review.username}</UserName>
+                        <ReviewDate>{review.createdAt}</ReviewDate>
+                    </div>
+                </UserInfo>
+                <ReviewDetails>
+                    <StarRating rate={review.rate}/>
+                    <span>{review.rate}</span>
+                </ReviewDetails>
+                <ReviewContent>
+                    <p>{review.email}</p>
+                    {review.content.length > maxLength
+                    ? review.content.slice(0, maxLength) + "..."
+                    : review.content}
+                </ReviewContent>
+                {hasmore='fromList' && review.content.loength > maxLength && (
+                    <MoreButton onClick={openModal}>더보기</MoreButton>
+                )}
+                {isModalOpen && (
+                    <ReviewListModal review={review} closeModal={closeModal} />
+                )}
+            </ReviewCardContainer>
     );
 };
 

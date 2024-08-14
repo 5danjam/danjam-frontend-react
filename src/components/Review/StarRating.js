@@ -9,11 +9,11 @@ const StarRating = ({ rate }) => {
     return (
         <div className="starRating">
             {[...Array(fullStars)].map((_, index) => (
-                <span key={index}><FaStar /></span>
+                <span key={index} style={{color: '#fbc02d'}}><FaStar /></span>
             ))}
-            {halfStar && <span><FaStarHalfAlt /></span>}
+            {halfStar && <span style={{color: '#fbc02d'}}><FaStarHalfAlt /></span>}
             {[...Array(totalStars - fullStars - (halfStar ? 1 : 0))].map((_, index) => (
-                <span key={index}><FaRegStar /></span>
+                <span key={index} style={{color: '#fbc02d'}}><FaRegStar /></span>
             ))}
         </div>
     );
