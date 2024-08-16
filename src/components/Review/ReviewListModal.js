@@ -90,8 +90,8 @@ const RatingValue = styled.div`
     font-size: 15px;
 `;
 
-const RatingTitle = styled.h1`
-    font-size: 3rem;
+const RatingTitle = styled.div`
+    font: bold 3rem 'arial';
     margin-bottom: 20px;
     text-align: center;
     line-height: 1;
