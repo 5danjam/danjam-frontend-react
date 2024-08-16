@@ -1,3 +1,5 @@
+import Search from "./search/Search";
+
 function Main() {
 
 
