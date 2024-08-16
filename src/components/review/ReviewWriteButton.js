@@ -1,16 +1,18 @@
-import ReviewWriteModal from "../components/Review/ReviewWriteModal";
+import ReviewWriteModal from "./ReviewWriteModal";
 import {useState} from "react";
 
-const ReviewWriteButton = () => {
+const ReviewWriteButton = ({userId, bookingId}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const closeModal = () => setIsModalOpen(false);
     const openModal = () => setIsModalOpen(true);
 
     return (
         <>
-            <button onClick={openModal}> 리뷰작성 </button>
+            <button onClick={openModal}> 리뷰작성</button>
             <ReviewWriteModal isOpen={isModalOpen}
-                              onRequestClose={closeModal}/>
+                              onRequestClose={closeModal}
+                              bookingId={bookingId}
+                              userId={userId}/>
         </>
 
     )
