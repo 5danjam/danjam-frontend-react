@@ -1,20 +1,26 @@
-import { Link, useParams } from 'react-router-dom'
+import {Link, Outlet, useLocation, useNavigate, useParams} from 'react-router-dom'
+import {Button} from "react-bootstrap";
+import React from "react";
 
 const MyPage = () => {
     const params = useParams()
     const id = params.id
-    
+    const navigate = useNavigate();
+    const location = useLocation();
+    const userInfo = location.state?.userInfo;
+    const goTo = (id) => {
+        navigate(`${id}`, { state: { userInfo } });
+    };
+
     return (
         <>
-            <Link to={`/my-page/${id}/privacy`}>개인 정보</Link>
-            <br/>
-            <Link to={`/my-page/${id}/bookings`}>예약 정보</Link>
-            <br/>
-            <Link to={`/my-page/${id}/wishes`}>위시리스트</Link>
-            <br/>
-            <Link to={`/my-page/${id}/reservations`}>숙소 예약 정보</Link>
+            <Button onClick={() => goTo('privacy')}>Privacy</Button>
+            <Button onClick={() => goTo('bookings')}>Bookings</Button>
+            <Button onClick={() => goTo('wishes')}>Wishes</Button>
+            <Button onClick={() => goTo('reservations')}>Reservations</Button>
+            <Outlet /> {/* This will render the nested routes */}
         </>
-    )
+    );
 }
 
 export default MyPage

@@ -39,14 +39,15 @@ const router = createBrowserRouter(
                     <Route path="Approve" element={<Approve/>}/>
                     <Route path="MemberList" element={<MemberList/>}/>
                 </Route>
-                <Route path="users">
-                    <Route path=":id/my-page" element={<MyPage/>}>
-                        <Route path="privacy" element={<Privacy/>}/>
-                        <Route path="bookings" element={<Bookings/>}/>
-                        <Route path="wishes" element={<WishPage/>}/>
-                        <Route path="reservations" element={<SellerCalendar2/>}/>
+
+                
+                    <Route path="users/:id/my-page" element={<MyPage/>}>
+                        <Route path="privacy" element={<Privacy />} />
+                        <Route path="bookings" element={<Bookings />} />
+                        <Route path="wishes" element={<WishPage />} />
+                        <Route path="reservations" element={<SellerCalendar2 />} />
                     </Route>
-                </Route>
+
             </Route>
         )
     )
