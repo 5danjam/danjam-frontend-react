@@ -240,7 +240,7 @@ const ModalClose = styled.button`
 const BookingListModal = styled(ModalContent)`
     max-width: 600px; // Adjust width for booking list modal
 `;
-
+// ㅇㅇㅇ
 function Layout() {
     const [showModal, setShowModal] = useState(false);
     const [showBookingListModal, setShowBookingListModal] = useState(false);
