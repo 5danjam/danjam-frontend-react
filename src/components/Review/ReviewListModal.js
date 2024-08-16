@@ -4,20 +4,43 @@ import StarRating from "./StarRating";
 import styled from "styled-components";
 import {FaTimes} from "react-icons/fa";
 import ReviewCard from "./ReviewCard";
+import {IoKeyOutline} from "react-icons/io5";
+import {MdOutlineCleanHands} from "react-icons/md";
+import {CiCircleCheck, CiShoppingTag} from "react-icons/ci";
+import {FaRegCircleCheck} from "react-icons/fa6";
+import {IoMdPin} from "react-icons/io";
+import {SlSpeech} from "react-icons/sl";
 
 Modal.setAppElement('#root');
 
 const StyledModal = styled(Modal)`
     position: relative;
+    top: 10%;
     width: 80%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
     background: white;
-    border-radius: 30px;
+    border-radius: 20px;
     padding: 20px;
     overflow-y: auto;
     max-height: 90vh;
+    flex-direction: row;
+    display: flex;
 `;
+
+const LeftPanel = styled.div`
+    flex: 1;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+`;
+
+const RightPanel = styled.div`
+    flex: 2;
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 70vh;
+`;
+
 
 const Overlay = styled.div`
     position: fixed;
@@ -57,18 +80,54 @@ const ReviewContainer = styled.div`
     gap: 10px;
 `;
 
-// {reviews.map((review, index) => (
-//     <ReviewItem key={index}>
-//         <p>{review.username}</p>
-//         <ReviewContainer>
-//             <span><StarRating rate={review.rate} /></span>
-//             <span>{review.rate}</span>
-//         </ReviewContainer>
-//         <p>{review.content}</p>
-//     </ReviewItem>
-// ))}
+const RatingLabel = styled.div`
+    font-size: 15px;
+    flex: 1;
+`;
 
-const ReviewListModal = ({ isOpen, onRequestClose, reviews }) => {
+const RatingValue = styled.div`
+    font-weight: bold;
+    font-size: 15px;
+`;
+
+const RatingTitle = styled.h1`
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1;
+`;
+
+const RatingItem = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 1.2rem;
+    align-items: center;
+`;
+
+const TitleContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    height: 100px;line-height: 1;
+`;
+
+const StyledImage = styled.img`
+    width: 20%;
+    max-height: 100%;
+    object-fit: contain;
+`;
+
+
+
+
+const ReviewListModal = ({isOpen, onRequestClose, reviews, stats}) => {
+
+    console.log("모달 stats 확인: ", stats);
+
     return (
         <StyledModal
             isOpen={isOpen}
@@ -77,18 +136,57 @@ const ReviewListModal = ({ isOpen, onRequestClose, reviews }) => {
             overlayClassName="ReviewModalOverlay"
             overlayElement={(props, contentElement) => <Overlay {...props}>{contentElement}</Overlay>}
         >
-            <ModalHeader>
-                <h2>후기 {reviews.length}개</h2>
-                <CloseButton onClick={onRequestClose} className="close-button"><FaTimes /></CloseButton>
-            </ModalHeader>
-            <ModalBody>
-                {reviews.map(review => (
-                    <ReviewCard
-                        key={review.id}
-                        review={review}
-                    />
-                ))}
-            </ModalBody>
+            <LeftPanel>
+                <TitleContainer>
+                    <StyledImage src="/left.png" alt="기본 이미지"/>
+                    <RatingTitle>{stats ? stats.rateAverage : "아직 등록된 리뷰가 없습니다."}</RatingTitle>
+                    <StyledImage src="/right.png" alt="기본 이미지"/>
+                </TitleContainer>
+                <RatingItem>
+                    <MdOutlineCleanHands size={25} style={{marginRight: '8px'}}/>
+                    <RatingLabel>청결도</RatingLabel>
+                    <RatingValue>{stats ? stats.cleanliness : "N/A"}</RatingValue>
+                </RatingItem>
+                <RatingItem>
+                    <FaRegCircleCheck size={25} style={{ marginRight: '8px' }}/>
+                    <RatingLabel>정확도</RatingLabel>
+                    <RatingValue>{stats ? stats.accuracy : "N/A"}</RatingValue>
+                </RatingItem>
+                <RatingItem>
+                    <IoKeyOutline size={25} style={{ marginRight: '8px' }}/>
+                    <RatingLabel> 체크인 </RatingLabel>
+                    <RatingValue>{stats ? stats.checkIn : "N/A"}</RatingValue>
+                </RatingItem>
+                <RatingItem>
+                    <SlSpeech size={25} style={{ marginRight: '8px' }}/>
+                    <RatingLabel>의사소통</RatingLabel>
+                    <RatingValue>{stats ? stats.communication : "N/A"}</RatingValue>
+                </RatingItem>
+                <RatingItem>
+                    <IoMdPin size={25} style={{ marginRight: '8px' }}/>
+                    <RatingLabel>위치</RatingLabel>
+                    <RatingValue>{stats ? stats.location : "N/A"}</RatingValue>
+                </RatingItem>
+                <RatingItem>
+                    <CiShoppingTag size={25} style={{ marginRight: '8px' }}/>
+                    <RatingLabel>가격 대비 만족도</RatingLabel>
+                    <RatingValue>{stats ? stats.costEffectiveness : "N/A"}</RatingValue>
+                </RatingItem>
+            </LeftPanel>
+            <RightPanel>
+                <ModalHeader>
+                    <h2>후기 {reviews.length}개</h2>
+                    <CloseButton onClick={onRequestClose} className="close-button"><FaTimes/></CloseButton>
+                </ModalHeader>
+                <ModalBody>
+                    {reviews.map(review => (
+                        <ReviewCard
+                            key={review.id}
+                            review={review}
+                        />
+                    ))}
+                </ModalBody>
+            </RightPanel>
         </StyledModal>
     );
 };

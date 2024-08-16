@@ -52,7 +52,7 @@ const MoreButton = styled.button`
     margin-top: 8px;
 `;
 
-const ReviewCard = ({review, hasmore = {}}) => {
+const ReviewCard = ({review, from = {}}) => {
 
     const maxLength = 100;
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,7 +78,7 @@ const ReviewCard = ({review, hasmore = {}}) => {
                     ? review.content.slice(0, maxLength) + "..."
                     : review.content}
                 </ReviewContent>
-                {hasmore='fromList' && review.content.loength > maxLength && (
+                {from='fromList' && review.content.loength > maxLength && (
                     <MoreButton onClick={openModal}>더보기</MoreButton>
                 )}
                 {isModalOpen && (

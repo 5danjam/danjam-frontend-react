@@ -5,11 +5,14 @@ import DormList from "./components/DormList";
 import TestWishButton from "./testComponents/TestWishButton";
 import TestCard from "./testComponents/TestCard"
 import TestList from "./testComponents/TestList"
+import ReviewList from "./components/Review/ReviewList";
+import ReviewWriteButton from "./testComponents/ReviewWriteButton";
 
 function App() {
   return (
     <div className="App">
-      <DormList/>
+      <ReviewList dormId={1}/>
+        <ReviewWriteButton/>
     </div>
   );
 }
