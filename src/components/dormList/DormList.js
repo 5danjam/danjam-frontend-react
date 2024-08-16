@@ -93,7 +93,7 @@ const DormList = ({filters} = {}) => {
 
     return (
         <div style={{display: 'flex', flexWrap: 'wrap', gap: '20px'}}>
-            {dorms.map(/* 위시새끼 단체로 움직임 */(dorm) => (
+            {dorms.map((dorm) => (
                 <DormCard
                     key={dorm.id}
                     dorm={dorm}
@@ -106,7 +106,9 @@ const DormList = ({filters} = {}) => {
                     더보기
                 </button>
             )}
-            {/* !hasMore 일 경우 마지막 더 불러올 리스트가 없습니다 메시지 추가 */}
+            {!hasMore && (
+                <p> 더 불러올 리스트가 없습니다. </p>
+            )}
         </div>
     );
 };
