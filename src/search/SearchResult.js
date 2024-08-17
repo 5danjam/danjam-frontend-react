@@ -9,9 +9,6 @@ function SearchResult(props) {
         props.search.date.checkOut = new Date()
     } else if (props.search.date.checkIn === null) {
         props.search.date.checkIn = new Date()
-    } else {
-        props.search.date.checkIn = new Date()
-        props.search.date.checkOut = new Date()
     }
     search = ({
         city: props.search.city,
@@ -74,11 +71,6 @@ function SearchResult(props) {
 
     // dormList
     const [data, setData] = useState({dormList: []})
-
-    let navigate = useNavigate()
-    let moveToDorm = (id) => {
-        navigate('dorm/showOne/' + id)
-    }
 
     useEffect(() => {
         setSelectedAmenity([])
@@ -198,6 +190,18 @@ function SearchResult(props) {
         }
         selectedAmenityList()
     }, [selectedAmenity, selectedTown]);
+
+    // 옵션 선택 정보 넘기기
+    const searchInfo = {
+        checkIn: search.checkIn,
+        checkOut: search.checkOut,
+        person: search.person,
+    }
+
+    let navigate = useNavigate()
+    let moveToDorm = (id) => {
+        navigate('dorm/' + id, {state: {searchInfo: searchInfo} })
+    }
 
     return (
         <>

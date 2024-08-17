@@ -8,12 +8,12 @@ function List_Y() {
     // 리스트
     const [dorms, setDorms] = useState([])
     const getDorms = async () => {
-        // const pageable = {
-        //     page: page,
-        //     size: size
-        // };
+        const pageable = {
+            page: page,
+            size: size
+        };
 
-        const resp = await axios.get("http://localhost:8080/showAll", {withCredentials: true});
+        const resp = await axios.get("http://localhost:8080/showAll", pageable, {withCredentials: true});
         console.log("데이터 확인", resp.data);
 
         try {
@@ -84,8 +84,8 @@ function List_Y() {
     }
 
     useEffect(() => {
-        // setPage(1); //페이지 초기화
-        // setDorms([]); //호텔 초기화
+        setPage(1); //페이지 초기화
+        setDorms([]); //호텔 초기화
         getDorms();
     }, []);
 

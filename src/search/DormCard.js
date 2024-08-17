@@ -5,7 +5,6 @@ import styled from "styled-components";
 import {IoIosArrowDropleft, IoIosArrowDropright} from "react-icons/io";
 import {useNavigate} from "react-router-dom";
 
-
 const CardContainer = styled.div`
     position: relative;
     border: 1px solid #ddd;
@@ -66,33 +65,25 @@ const InfoContainer = styled.div`
 `;
 
 const DormCard = ({dorm, isWish, toggleWish}) => {
-    console.log("dorm: ", dorm)
-    // const originalPrice = dorm.minPrice + (dorm.minPrice / 4);
-
-    // 위시리스트 버튼에 넘겨줄 값들
-
-    let navigate = useNavigate()
-    let moveToDorm = () => {
-        navigate('dorm/showOne/' + dorm.id)
-    }
-
-    // 이미지 슬라이드
-
     const maxLength = 30;
-
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
-
     const images = dorm.room.images || [];
-    // dorm.images 없어도 실행 가능한 코드
+    let navigate = useNavigate();
 
-    const nextImage = () => {
+    const moveToDorm = () => {
+        navigate('dorm/showOne/' + dorm.id)
+    };
+
+    const nextImage = (e) => {
+        e.stopPropagation(); // 부모로의 이벤트 전파 방지
         setCurrentImageIndex((prevIndex) =>
             prevIndex === images.length - 1 ? 0 : prevIndex + 1
         );
     };
 
-    const prevImage = () => {
+    const prevImage = (e) => {
+        e.stopPropagation(); // 부모로의 이벤트 전파 방지
         setCurrentImageIndex((prevIndex) =>
             prevIndex === 0 ? images.length - 1 : prevIndex - 1
         );
@@ -109,12 +100,12 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
                 ) : (
                     <Image src="/호텔샘플.png" alt="기본 이미지"/>
                 )}
-                {!isHovered && images.length > 1 && (
+                {images.length > 1 && (
                     <>
-                        <NavButton left onClick={prevImage}>
+                        <NavButton left onClick={prevImage} className="nav-button">
                             <IoIosArrowDropleft />
                         </NavButton>
-                        <NavButton right onClick={nextImage}>
+                        <NavButton right onClick={nextImage} className="nav-button">
                             <IoIosArrowDropright />
                         </NavButton>
                     </>
@@ -123,18 +114,13 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
             </ImageContainer>
             <InfoContainer>
                 <h3 style={{margin: '5px 0'}}>{dorm.name}</h3>
-                {/* 잊지 말고 호텔이름이랑 호텔설명에 마진값 주기 */}
                 {dorm.description.length > maxLength
-                    ? dorm.description.content.slice(0, maxLength) + "..."
+                    ? dorm.description.slice(0, maxLength) + "..."
                     : dorm.description.content}
-                {/*<p style={{margin: '0 0 10px'}}>{dorm.description}</p>*/}
-                {/* 조건부 렌더링으로 불러온 객체에 기간에 관련된 데이터 존재하면 띄워주기 */}
                 <div>
-                    {/*<span style={{textDecoration: 'line-through', color: '#999'}}>{originalPrice} 원</span>*/}
                     <span style={{color: '#e53935', marginLeft: '10px'}}>{dorm.room.price} 원</span>
                 </div>
                 <div style={{color: '#fbc02d'}}>
-                    {/* 조건부 렌더링으로 rating 값이 없으면 첫 리뷰를 달아주세요 띄워주기 */}
                     <FaStar/> {dorm.rate}
                 </div>
             </InfoContainer>
