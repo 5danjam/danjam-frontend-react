@@ -78,6 +78,8 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
 
     // 이미지 슬라이드
 
+    const maxLength = 30;
+
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
@@ -122,7 +124,10 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
             <InfoContainer>
                 <h3 style={{margin: '5px 0'}}>{dorm.name}</h3>
                 {/* 잊지 말고 호텔이름이랑 호텔설명에 마진값 주기 */}
-                <p style={{margin: '0 0 10px'}}>{dorm.description}</p>
+                {dorm.description.length > maxLength
+                    ? dorm.description.content.slice(0, maxLength) + "..."
+                    : dorm.description.content}
+                {/*<p style={{margin: '0 0 10px'}}>{dorm.description}</p>*/}
                 {/* 조건부 렌더링으로 불러온 객체에 기간에 관련된 데이터 존재하면 띄워주기 */}
                 <div>
                     {/*<span style={{textDecoration: 'line-through', color: '#999'}}>{originalPrice} 원</span>*/}
