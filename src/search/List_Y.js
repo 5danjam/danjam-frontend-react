@@ -31,8 +31,8 @@ function List_Y() {
 
 
     // 위시한테 값 넘겨주기
-    const location = useLocation();
-    let userInfo = location.state.userInfo;
+    // const location = useLocation();
+    // let userInfo = location.state.userInfo;
     const navigate = useNavigate();
 
 
@@ -40,10 +40,10 @@ function List_Y() {
     const toggleWish = async (dormId) => {
         try {
             // 로그인
-            if (!userInfo) {
-                navigate("/login", { state: { from: location } });
-                return;
-            }
+            // if (!userInfo) {
+            //     navigate("/login", { state: { from: location } });
+            //     return;
+            // }
 
             setDorms(prevDorms =>
                 prevDorms.map(dorm =>
