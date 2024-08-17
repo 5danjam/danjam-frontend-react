@@ -54,6 +54,11 @@ function List() {
 }
 
 let TableRow = ({dorm, moveToDorm}) => {
+    // 리뷰 존재하지 않는다면 0.00으로 변경
+    if (dorm.rate === null) {
+        dorm.rate = 0.00
+    }
+    
     return (
         <tr onClick={() => moveToDorm(dorm.id)}>
             <td>{dorm.id}</td>
