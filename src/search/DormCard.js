@@ -81,7 +81,7 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
-    const images = dorm.roomImages || [];
+    const images = dorm.room.images || [];
     // dorm.images 없어도 실행 가능한 코드
 
     const nextImage = () => {
@@ -103,8 +103,8 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
                 onMouseLeave={() => setIsHovered(false)}
             >
                 {images.length > 0 ? (
-                    <Image src={'http://localhost:8080/uploads/' + images[currentImageIndex].name + '.'
-                        + images[currentImageIndex].ext} alt={`룸이미지 ${currentImageIndex + 1}`}/>                ) : (
+                    <Image src={'http://localhost:8080/uploads/' + images[currentImageIndex].name + '.' + images[currentImageIndex].ext} alt={`룸이미지 ${currentImageIndex + 1}`}/>
+                ) : (
                     <Image src="/호텔샘플.png" alt="기본 이미지"/>
                 )}
                 {!isHovered && images.length > 1 && (

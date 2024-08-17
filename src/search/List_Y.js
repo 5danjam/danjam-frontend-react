@@ -20,6 +20,7 @@ function List_Y() {
             if (resp.data.result === 'success') {
                 const newDorms = resp.data.dormList;
                 setDorms(newDorms);
+
                 // if (resp.data.totalPages) {
                 //     setHasMore(false);
                 // }
