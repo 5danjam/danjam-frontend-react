@@ -17,6 +17,9 @@ import Privacy from './users/Privacy';
 import Bookings from './users/Bookings';
 import WishPage from './users/WishPage';
 import DormOne from "./dorm/DormOne";
+import ReviewWriteModal from "./review/ReviewWriteModal";
+import ReviewList from "./review/ReviewList";
+import ReviewListModal from "./review/ReviewListModal";
 
 
 const router = createBrowserRouter(
@@ -47,6 +50,12 @@ const router = createBrowserRouter(
                     <Route path="privacy" element={<Privacy />} />
                     <Route path="bookings" element={<Bookings />} />
                     <Route path="wishes" element={<WishPage />} />
+                </Route>
+
+                <Route path="review">
+                    <Route path="ReviewWriteModal" element={<ReviewWriteModal/>} />
+                    <Route path="ReviewList" element={<ReviewList/>} />
+                    <Route path="ReviewListModal" element={<ReviewListModal/>} />
                 </Route>
 
             </Route>
