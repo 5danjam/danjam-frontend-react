@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import DormCard from "./DormCard";
+import * as dorms from "react-bootstrap/ElementChildren";
 
 function List() {
     const [data, setData] = useState({dormList: []})
@@ -38,6 +40,7 @@ function List() {
                     <th>town</th>
                     <th>방 번호</th>
                     <th>가격</th>
+                    <th>평점</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -60,7 +63,9 @@ let TableRow = ({dorm, moveToDorm}) => {
             <td>{dorm.town}</td>
             <td>{dorm.room.id}</td>
             <td>{dorm.room.price}</td>
+            <td>{dorm.rate}</td>
         </tr>
     )
 }
+
 export default List

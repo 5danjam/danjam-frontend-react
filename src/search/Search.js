@@ -1,10 +1,11 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import 'react-datepicker/dist/react-datepicker.css';
-import List from "./List";
+import List_Y from "./List_Y";
 import DatePicker from "react-datepicker";
 import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import SearchResult from "./SearchResult";
+import List from "./List";
 
 function Search() {
     const navigate = useNavigate();
