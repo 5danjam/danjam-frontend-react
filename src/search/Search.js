@@ -6,6 +6,7 @@ import {Button} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
 import SearchResult from "./SearchResult";
 import List from "./List";
+import TestList from "./TestList";
 
 function Search() {
     const navigate = useNavigate();
@@ -123,7 +124,8 @@ function Search() {
             </div>
             <div>
                 {search.city === '선택' && search.checkIn === '' && search.checkOut === '' && search.person === 0 ?
-                    <List/> : <SearchResult search={search}/>}
+                    // eslint-disable-next-line react/jsx-pascal-case
+                    (<List_Y/>) : (<SearchResult search={search}/>)}
             </div>
         </>
     );

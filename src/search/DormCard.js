@@ -3,6 +3,7 @@ import WishButton from './WishButton';
 import {FaStar} from "react-icons/fa";
 import styled from "styled-components";
 import {IoIosArrowDropleft, IoIosArrowDropright} from "react-icons/io";
+import {useNavigate} from "react-router-dom";
 
 
 const CardContainer = styled.div`
@@ -70,6 +71,10 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
 
     // 위시리스트 버튼에 넘겨줄 값들
 
+    let navigate = useNavigate()
+    let moveToDorm = () => {
+        navigate('dorm/showOne/' + dorm.id)
+    }
 
     // 이미지 슬라이드
 
@@ -92,7 +97,7 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
     };
 
     return (
-        <CardContainer>
+        <CardContainer onClick={moveToDorm}>
             <ImageContainer
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
