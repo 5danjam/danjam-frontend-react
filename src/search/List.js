@@ -22,7 +22,7 @@ function List(props) {
     const [dorms, setDorms] = useState([]);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
-    const size = 10;
+    const size = 15;
 
     const location = useLocation();
     const userInfo = location.state?.userInfo || {};
@@ -50,8 +50,10 @@ function List(props) {
             if (resp.data.result === 'success') {
                 const newDorms = resp.data.dormList.content.map(dorm => ({
                     ...dorm,
-                    isWish: wishList.includes(dorm.id),
+                    isWish: wishList.includes(dorm.id), // 위시리스트에 포함된 도미토리는 isWish를 true로 설정
                 }));
+
+                const allDormsNull = newDorms.every(dorm => dorm.id == null);
 
                 if (reset) {
                     setDorms(newDorms);
@@ -59,7 +61,8 @@ function List(props) {
                     setDorms(prevDorms => [...prevDorms, ...newDorms]);
                 }
 
-                if (newDorms.length < size) {
+
+                if (newDorms.length < size || allDormsNull) {
                     setHasMore(false);
                 }
             }
@@ -102,8 +105,11 @@ function List(props) {
 
             const targetDorm = dorms.find(dorm => dorm.id === dormId);
 
+            console.log("targetDorm?: " + targetDorm.isWish)
+
             if (targetDorm.isWish) {
                 await axios.delete(`http://localhost:8080/wishes/${userInfo.id}/${dormId}`, {withCredentials: true});
+
             } else {
                 await axios.post(`http://localhost:8080/wishes/${userInfo.id}/${dormId}`, {}, {withCredentials: true});
             }
@@ -151,14 +157,14 @@ function List(props) {
     return (
         <>
             <ListContainer>
-                {dorms.map((dorm) => (
+                {dorms.map((dorm) => (dorm.id && (
                     <DormCard
                         key={dorm.id}
                         dorm={dorm}
                         isWish={dorm.isWish}
                         toggleWish={() => toggleWish(dorm.id)}
                         goToDorm={() => moveToDorm(dorm.id)}
-                    />
+                    />)
                 ))}
             </ListContainer>
 
