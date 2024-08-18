@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Modal from 'react-modal';
 import styled from 'styled-components';
+import { format, startOfDay, endOfDay } from 'date-fns';
+import moment from 'moment';
 
 // Set the app element for accessibility
 Modal.setAppElement('#root');
@@ -15,14 +17,12 @@ const Container = styled.div`
     font-family: Arial, sans-serif;
     max-width: 1200px;
     margin: auto;
-    display: flex;
-    gap: 20px;
 `;
 
 const Header = styled.div`
     display: flex;
-    flex-direction: column; // Align items in a column
-    gap: 10px; // Add space between Title and DateInput
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 20px;
 `;
 
@@ -30,65 +30,47 @@ const Title = styled.h1`
     margin: 0;
     font-size: 2rem;
     color: #333;
-`;
-
-const DateInput = styled.input`
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    width: 150px;
+    font-weight: 600;
 `;
 
 const CalendarWrapper = styled.div`
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-`;
-
-const StyledCalendar = styled(Calendar)`
-    .react-calendar {
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    .react-calendar__month-view__days__day--neighboringMonth {
-        color: #ccc;
-    }
-    .react-calendar__tile--active {
-        background: #007bff;
-        color: white;
-    }
-    .react-calendar__tile--highlighted-date {
-        background: #ffeb3b !important;
-        color: black;
-    }
-    .highlighted-date {
-        background-color: #ffeb3b; /* Highlighted dates */
-        border-radius: 50%;
-        color: black;
-    }
-`;
-
-const EventsList = styled.div`
-    flex: 2;
     margin-top: 20px;
-`;
 
-const EventButton = styled.button`
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 10px;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    .rbc-calendar {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-    &:hover {
-        background: #0056b3;
+    .rbc-header {
+        background: #f7f7f7;
+        color: #333;
+        font-weight: 500;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .rbc-day-bg {
+        background: #f9f9f9;
+    }
+
+    .rbc-day-slot {
+        border-right: 1px solid #e0e0e0;
+    }
+
+    .rbc-month-view .rbc-month-header {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .rbc-event {
+        border-radius: 4px;
+        color: #fff;
+        padding: 4px 8px;
+        font-size: 0.875rem;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.8;
+        }
     }
 `;
 
@@ -98,14 +80,18 @@ const ModalContent = styled.div`
 
 const ModalTitle = styled.h2`
     margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
 `;
 
 const ModalText = styled.p`
     margin: 10px 0;
+    font-size: 1rem;
+    color: #555;
 `;
 
 const CloseButton = styled.button`
-    background: #e74c3c;
+    background: #ff5a5f;
     color: white;
     border: none;
     padding: 10px;
@@ -114,39 +100,28 @@ const CloseButton = styled.button`
     float: right;
 
     &:hover {
-        background: #c0392b;
+        background: #ff4a4f;
     }
 `;
 
+// Initialize localizer
+const localizer = momentLocalizer(moment);
+
+const generateRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+};
+
 const SellerCalendar2 = () => {
     const location = useLocation();
-    const userInfo = location.state.userInfo;
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const userInfo = location.state?.userInfo;
     const [events, setEvents] = useState([]);
-    const [eventsData, setEventsData] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [selectedEventDetails, setSelectedEventDetails] = useState(null);
-    const [searchDate, setSearchDate] = useState('');
-
-    const formatDateString = (date) => {
-        if (date) {
-            const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-            return utcDate.toISOString().split('T')[0];
-        }
-        return '';
-    };
-
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
-        const dateString = formatDateString(date);
-        setEvents(eventsData[dateString] || []);
-        setSearchDate(dateString);
-    };
-
-    const getTileClassName = (date) => {
-        const dateString = formatDateString(date);
-        return eventsData[dateString] ? 'highlighted-date' : '';
-    };
 
     const openModal = (eventDetails) => {
         setSelectedEventDetails(eventDetails);
@@ -160,121 +135,83 @@ const SellerCalendar2 = () => {
 
     useEffect(() => {
         const fetchBookings = async () => {
+            if (!userInfo || !userInfo.id) return;
+
             try {
-                const id = userInfo.id;
-                const response = await axios.get(`http://localhost:8080/SellerCalendar/${id}`, {
+                const response = await axios.get(`http://localhost:8080/SellerCalendar/${userInfo.id}`, {
                     withCredentials: true
                 });
 
-                const fetchedEventsData = response.data.reduce((acc, booking) => {
+                const fetchedEvents = response.data.map(booking => {
                     const checkInDate = new Date(booking.booking.checkIn);
-                    const checkInDateString = checkInDate.toISOString().split('T')[0];
-
                     const checkOutDate = new Date(booking.booking.checkOut);
-                    const checkOutDateString = checkOutDate.toISOString().split('T')[0];
 
-                    const eventDetails = {
-                        type: 'Check-in',
-                        userName: booking.booking.userName,
+                    return {
+                        title: `Check-in: ${booking.booking.userName}`,
+                        start: startOfDay(checkInDate),
+                        end: endOfDay(checkOutDate),
                         details: {
                             ...booking.booking,
                             address: booking.address,
                             hotelName: booking.name,
                             room: booking.room
-                        }
+                        },
+                        userName: booking.booking.userName, // Add the userName to event data
+                        color: generateRandomColor() // Generate a unique color for each event
                     };
+                });
 
-                    if (!acc[checkInDateString]) {
-                        acc[checkInDateString] = [];
-                    }
-                    acc[checkInDateString].push(eventDetails);
-
-                    const checkOutEventDetails = {
-                        type: 'Check-out',
-                        userName: booking.booking.userName,
-                        details: {
-                            ...booking.booking,
-                            address: booking.address,
-                            hotelName: booking.name,
-                            room: booking.room
-                        }
-                    };
-
-                    if (!acc[checkOutDateString]) {
-                        acc[checkOutDateString] = [];
-                    }
-                    acc[checkOutDateString].push(checkOutEventDetails);
-
-                    return acc;
-                }, {});
-
-                setEventsData(fetchedEventsData);
-                const dateString = formatDateString(selectedDate);
-                setEvents(fetchedEventsData[dateString] || []);
+                setEvents(fetchedEvents);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
             }
         };
 
         fetchBookings();
-    }, [userInfo.id, selectedDate]);
+    }, [userInfo?.id]);
 
-    const handleSearchDateChange = (e) => {
-        const date = new Date(e.target.value);
-        setSearchDate(e.target.value);
-        if (!isNaN(date.getTime())) {
-            setSelectedDate(date);
-            const dateString = formatDateString(date);
-            setEvents(eventsData[dateString] || []);
-        }
+    const eventStyleGetter = (event) => {
+        const style = {
+            backgroundColor: event.color || '#00A699', // Default color
+            borderRadius: '4px',
+            color: '#fff',
+            padding: '4px 8px',
+            fontSize: '0.875rem',
+            border: 'none'
+        };
+
+        return {
+            style
+        };
     };
 
     return (
         <Container>
+            <Header>
+                <Title>{userInfo?.name || 'Seller'} Calendar</Title>
+            </Header>
+
             <CalendarWrapper>
-                <StyledCalendar
-                    onChange={handleDateChange}
-                    value={selectedDate}
-                    tileClassName={({ date }) => getTileClassName(date)}
+                <BigCalendar
+                    localizer={localizer}
+                    events={events}
+                    startAccessor="start"
+                    endAccessor="end"
+                    style={{ height: '600px' }}
+                    onSelectEvent={openModal}
+                    eventPropGetter={eventStyleGetter} // Apply the style function
                 />
             </CalendarWrapper>
-
-            <EventsList>
-                <Header>
-                    <Title>{userInfo.name} Seller Calendar</Title>
-                    <DateInput
-                        type="date"
-                        value={searchDate}
-                        onChange={handleSearchDateChange}
-                        placeholder="Select or enter a date"
-                    />
-                </Header>
-
-                {selectedDate && (
-                    <>
-                        <h2>Events for {formatDateString(selectedDate)}:</h2>
-                        <ul>
-                            {events.length > 0 ? (
-                                events.map((event, index) => (
-                                    <li key={index}>
-                                        <EventButton onClick={() => openModal(event)}>
-                                            {event.type}: {event.userName}
-                                        </EventButton>
-                                    </li>
-                                ))
-                            ) : (
-                                <li>No events for this date.</li>
-                            )}
-                        </ul>
-                    </>
-                )}
-            </EventsList>
 
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}
                 contentLabel="Event Details"
                 style={{
+                    overlay: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Darker background overlay
+                        zIndex: 1000 // Ensure it is above other content
+                    },
                     content: {
                         top: '50%',
                         left: '50%',
@@ -284,17 +221,21 @@ const SellerCalendar2 = () => {
                         transform: 'translate(-50%, -50%)',
                         width: '80%',
                         maxWidth: '600px',
-                    },
+                        padding: '20px',
+                        borderRadius: '8px',
+                        backgroundColor: '#fff',
+                        zIndex: 1001 // Ensure it is above the overlay
+                    }
                 }}
             >
                 <ModalContent>
                     <ModalTitle>Event Details</ModalTitle>
                     {selectedEventDetails ? (
                         <div>
-                            <ModalText><strong>Type:</strong> {selectedEventDetails.type}</ModalText>
-                            <ModalText><strong>Reservation Name:</strong> {selectedEventDetails.userName}</ModalText>
-                            <ModalText><strong>Check-in Date:</strong> {selectedEventDetails.details.checkIn}</ModalText>
-                            <ModalText><strong>Check-out Date:</strong> {selectedEventDetails.details.checkOut}</ModalText>
+                            <ModalText><strong>Type:</strong> Check-in</ModalText>
+                            <ModalText><strong>Reservation Name:</strong> {selectedEventDetails.details.userName}</ModalText>
+                            <ModalText><strong>Check-in Date:</strong> {format(new Date(selectedEventDetails.start), 'yyyy-MM-dd')}</ModalText>
+                            <ModalText><strong>Check-out Date:</strong> {format(new Date(selectedEventDetails.end), 'yyyy-MM-dd')}</ModalText>
                             <ModalText><strong>Hotel Name:</strong> {selectedEventDetails.details.hotelName || 'N/A'}</ModalText>
                             <ModalText><strong>Address:</strong> {selectedEventDetails.details.address || 'N/A'}</ModalText>
                             <ModalText><strong>Room Name:</strong> {selectedEventDetails.details.room?.name || 'N/A'}</ModalText>

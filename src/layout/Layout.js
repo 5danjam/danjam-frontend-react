@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Button } from 'react-bootstrap';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Auth from '../users/Auth';
 import styled from 'styled-components';
-import logo from '../images/logo.png'; // Import the logo image
+import logo from '../images/danjam-logo.png'; // Import the logo image
+import SellerCalendar from '../seller/SellerCalendar';
+import Search from "../search/Search"; // Import the SellerCalendar component
 
 // Colors
 const colors = {
@@ -39,6 +41,12 @@ const Header = styled.header`
     box-sizing: border-box;
 `;
 
+const HrLine = styled.hr`
+    background: rgb(240, 240, 240);
+    height: 1px;
+    border: 0;
+`;
+
 // ContentContainer Styling
 const ContentContainer = styled.div`
     display: flex;
@@ -62,7 +70,7 @@ const ButtonsWrapper = styled.div`
 
 // Logo Styling
 const Logo = styled.img`
-    height: 40px; // Adjust height to fit well within the header
+    height: 60px; // Adjust height to fit well within the header
     cursor: pointer;
 `;
 
@@ -122,14 +130,14 @@ const BookingListButton = styled(Button)`
 const DropdownMenu = styled.ul`
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 5px 15px;
     position: absolute;
     top: 60px;
     right: 0;
     background: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: ${props => (props.show ? 'block' : 'none')};
-    width: 200px;
+    width: 230px;
     border-radius: 4px;
     z-index: 1000;
 `;
@@ -137,12 +145,12 @@ const DropdownMenu = styled.ul`
 // DropdownMenuItem Styling
 const DropdownMenuItem = styled.li`
     padding: 12px 16px;
-    border-bottom: 1px solid ${colors.lightGray};
+
     &:last-child {
         border-bottom: none;
     }
     &:hover {
-        background: ${colors.lightGray};
+        background-color: rgb(240,242,242);
     }
     a {
         color: ${colors.mediumGrayBlue};
@@ -151,7 +159,6 @@ const DropdownMenuItem = styled.li`
     button {
         background: transparent;
         border: none;
-        color: ${colors.mediumGrayBlue};
         cursor: pointer;
         font-size: 16px;
         text-align: left;
@@ -164,7 +171,7 @@ const DropdownMenuItem = styled.li`
 const Main = styled.main`
     padding: 80px 0 20px;  // Adjust padding to account for fixed header
     flex: 1; // Ensures the main content takes up the remaining space
-    background-color: ${colors.lightGray}; // Background color for the main content
+    background-color: white; // Background color for the main content
 `;
 
 // Footer Styling
@@ -214,6 +221,7 @@ const ModalOverlay = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 `;
 
 const ModalContent = styled.div`
@@ -221,7 +229,6 @@ const ModalContent = styled.div`
     padding: 20px;
     border-radius: 8px;
     position: relative;
-    width: 80%;
     max-width: 400px;
 `;
 
@@ -238,9 +245,10 @@ const ModalClose = styled.button`
 
 // BookingListModal Styling
 const BookingListModal = styled(ModalContent)`
-    max-width: 600px; // Adjust width for booking list modal
+    overflow: auto; // Allow scrolling if content overflows
+    padding: 20px; // Ensure padding for better spacing
 `;
-// ㅇㅇㅇ
+
 function Layout() {
     const [showModal, setShowModal] = useState(false);
     const [showBookingListModal, setShowBookingListModal] = useState(false);
@@ -292,7 +300,7 @@ function Layout() {
     const Home = () => navigate('/', { state: { userInfo } });
     const REGIST = () => navigate('/dorm/insert', { state: { userInfo } });
     const RoomInser = () => navigate('/seller/SellerList', { state: { userInfo } });
-    const SellerCalendar = () => navigate('/seller/SellerCalendar', { state: { userInfo } });
+    const SellerCalendarNavigate = () => navigate('/seller/SellerCalendar', { state: { userInfo } });
     const SellerCalendar2 = () => navigate('/seller/SellerCalendar2', { state: { userInfo } });
     const Approve = () => navigate('/admin/Approve', { state: { userInfo } });
     const MemberList = () => navigate('/admin/MemberList', { state: { userInfo } });
@@ -304,14 +312,22 @@ function Layout() {
         }
     };
 
-    const handleMyPage = () => navigate(`/users/${userInfo.id}/my-page`);
+    const handleMyPage = (page) => navigate(`/users/${userInfo.id}/my-page/${page}`);
 
     const handleLoginSuccess = () => setShowModal(false);
+
+    // Memoize the SellerCalendar component
+    const MemoizedSellerCalendar = useMemo(() => {
+        return <SellerCalendar userInfo={userInfo} />;
+    }, [userInfo]);
 
     return (
         <AppWrapper>
             <Header>
-                <Logo src={logo} alt="Company Logo" onClick={() => navigate('/')} />
+                <Logo src={logo} alt="Company Logo" onClick={(toMain) => navigate('/')} />
+
+                {/*<Search/>*/}
+
                 <ButtonsWrapper>
                     {userInfo.role === 'ROLE_SELLER' && (
                         <BookingListButton onClick={() => setShowBookingListModal(true)}>
@@ -325,27 +341,31 @@ function Layout() {
                 <DropdownMenu show={dropdownOpen} ref={dropdownRef}>
                     {!userInfo.name ? (
                         <>
-                            <DropdownMenuItem><Button onClick={LogIn}>Log In</Button></DropdownMenuItem>
-                            <DropdownMenuItem><Button onClick={SignUp}>Sign Up</Button></DropdownMenuItem>
+                            <DropdownMenuItem><Button onClick={LogIn}>로그인</Button></DropdownMenuItem>
+                            <DropdownMenuItem><Button onClick={SignUp}>회원가입</Button></DropdownMenuItem>
                         </>
                     ) : (
                         <>
                             {userInfo.role === 'ROLE_SELLER' && (
                                 <>
-                                    <DropdownMenuItem><Button onClick={REGIST}>Register Property</Button></DropdownMenuItem>
-                                    <DropdownMenuItem><Button onClick={RoomInser}>Property List</Button></DropdownMenuItem>
-                                    <DropdownMenuItem><Button onClick={SellerCalendar}>Booking List</Button></DropdownMenuItem>
-                                    <DropdownMenuItem><Button onClick={SellerCalendar2}>Extended Booking List</Button></DropdownMenuItem>
+                                    <DropdownMenuItem><Button onClick={REGIST}>당신의 단잠을 함께하세요</Button></DropdownMenuItem>
+                                    <DropdownMenuItem><Button onClick={RoomInser}>단잠리스트</Button></DropdownMenuItem>
+                                    <DropdownMenuItem><Button onClick={SellerCalendar2}>숙소관리</Button></DropdownMenuItem>
+                                    <HrLine/>
                                 </>
                             )}
                             {userInfo.role === 'ROLE_ADMIN' && (
                                 <>
-                                    <DropdownMenuItem><Button onClick={Approve}>Hotel Approval</Button></DropdownMenuItem>
-                                    <DropdownMenuItem><Button onClick={MemberList}>Member List</Button></DropdownMenuItem>
+                                    <DropdownMenuItem><Button onClick={Approve}>단잠승인</Button></DropdownMenuItem>
+                                    <DropdownMenuItem><Button onClick={MemberList}>사용자리스트</Button></DropdownMenuItem>
+                                    <HrLine/>
                                 </>
                             )}
-                            <DropdownMenuItem><Button onClick={handleMyPage}>My Page</Button></DropdownMenuItem>
-                            <DropdownMenuItem><Button onClick={LogOut}>Log Out</Button></DropdownMenuItem>
+                            <DropdownMenuItem><Button onClick={() => handleMyPage('privacy')}>개인정보</Button></DropdownMenuItem>
+                            <DropdownMenuItem><Button onClick={() => handleMyPage('bookings')}>예약정보</Button></DropdownMenuItem>
+                            <DropdownMenuItem><Button onClick={() => handleMyPage('wishes')}>위시리스트</Button></DropdownMenuItem>
+                            <HrLine/>
+                            <DropdownMenuItem><Button onClick={LogOut}>로그아웃</Button></DropdownMenuItem>
                         </>
                     )}
                 </DropdownMenu>
@@ -385,11 +405,11 @@ function Layout() {
                         <ModalClose onClick={() => setShowBookingListModal(false)}>
                             &times;
                         </ModalClose>
-                        <h2>Booking List</h2>
-                        {/*<SellerCalendar/>*/}
+                        {MemoizedSellerCalendar}
                     </BookingListModal>
                 </ModalOverlay>
             )}
+
         </AppWrapper>
     );
 }

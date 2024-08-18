@@ -1,14 +1,22 @@
 import Search from "./search/Search";
+import {useLocation} from "react-router-dom";
 
 function Main() {
+    let userInfo={
+        id: '',
+        name: '',
+        role: ''
+    }
+    const location = useLocation();
+    if (location.state != null) {
+        userInfo = location.state.userInfo
 
+    }
+    console.log("userInfo", userInfo)
 
     return (
         <>
-            <div>
-                <h1>Tlvkf main1 18</h1>
-            </div>
-            <Search/>
+            <Search userInfo={userInfo}/>
         </>
     )
 }
