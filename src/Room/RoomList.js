@@ -1,10 +1,11 @@
+/*
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 사용
 import axios from 'axios';
 import { Button, Col, Container, Row, Card } from 'react-bootstrap';
 
 
-/*룸 리스트 컴포넌트 방 목록 관리하기 위한 파일. */
+/!*룸 리스트 컴포넌트 방 목록 관리하기 위한 파일. *!/
 const RoomList = () => {
     const [rooms, setRooms] = useState([]); // 방 목록을 저장할 상태
     const { id } = useParams(); // URL에서 ID를 추출
@@ -73,3 +74,4 @@ const RoomList = () => {
 };
 
 export default RoomList;
+*/

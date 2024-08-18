@@ -197,6 +197,7 @@ const DormDetails = (props) => {
 
     const [dorm, setDorm] = useState(null);
     const [rooms, setRooms] = useState([]);
+    const [amenities, setAmenities] = useState([])
     const [user, setUser] = useState(null);
     const [featuredImage, setFeaturedImage] = useState(null); // 최상단 사진 상태 추가
     const { id } = useParams();
@@ -212,8 +213,7 @@ const DormDetails = (props) => {
                 if (dormResponse.data.result === 'success') {
                     setDorm(dormResponse.data);
                     setRooms(dormResponse.data.rooms);
-                    console.log("dorm", dorm)
-                    console.log("rooms", rooms)
+                    setAmenities(dormResponse.data.amenities);
                     setFeaturedImage(dormResponse.data.dormImages[0]); // 최상단 사진 초기화
                 } else {
                     console.error('숙소 정보를 가져오는 데 실패했습니다.');
