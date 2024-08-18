@@ -212,6 +212,8 @@ const DormDetails = (props) => {
                 if (dormResponse.data.result === 'success') {
                     setDorm(dormResponse.data);
                     setRooms(dormResponse.data.rooms);
+                    console.log("dorm", dorm)
+                    console.log("rooms", rooms)
                     setFeaturedImage(dormResponse.data.dormImages[0]); // 최상단 사진 초기화
                 } else {
                     console.error('숙소 정보를 가져오는 데 실패했습니다.');

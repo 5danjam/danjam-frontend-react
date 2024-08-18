@@ -42,7 +42,7 @@ function Auth({ onSuccess }) { // Accept onSuccess as a prop
                 const userInfo = {
                     id: resp.data.id,
                     name: resp.data.name,
-                    email: resp.date.email,
+                    email: resp.data.email,
                     phoneNum: resp.data.phoneNum,
                     role: resp.data.role,
                 };
