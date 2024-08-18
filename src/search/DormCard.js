@@ -64,7 +64,7 @@ const InfoContainer = styled.div`
     padding-top: 5px;
 `;
 
-const DormCard = ({dorm, isWish, toggleWish}) => {
+const DormCard = ({dorm, isWish, toggleWish, goToDorm}) => {
     const maxLength = 30;
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
@@ -72,7 +72,7 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
     let navigate = useNavigate();
 
     const moveToDorm = () => {
-        navigate('dorm/' + dorm.id)
+        goToDorm();
     };
 
     const nextImage = (e) => {
@@ -90,7 +90,7 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
     };
 
     return (
-        <CardContainer onClick={moveToDorm}>
+        <CardContainer onClick={goToDorm}>
             <ImageContainer
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -110,7 +110,7 @@ const DormCard = ({dorm, isWish, toggleWish}) => {
                         </NavButton>
                     </>
                 )}
-                <WishButton isWish={isWish} toggleWish={toggleWish}/>
+                <WishButton isWish={isWish} toggleWish={() => toggleWish(dorm.id)}/>
             </ImageContainer>
             <InfoContainer>
                 <h3 style={{margin: '5px 0'}}>{dorm.name}</h3>

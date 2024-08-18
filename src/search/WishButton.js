@@ -19,7 +19,9 @@ const Button = styled.div`
 
 
 const WishButton = ({ isWish, toggleWish }) => (
-    <Button onClick={toggleWish} className={isWish ? 'wish-active' : 'wish-inactive'}>
+    <Button onClick={(e) => {
+        e.stopPropagation()
+        toggleWish()}} className={isWish ? 'wish-active' : 'wish-inactive'}>
         {isWish ? <FaHeart /> : <FaRegHeart />}
     </Button>
 );
