@@ -1,4 +1,5 @@
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from 'react-router-dom';
+<<<<<<< HEAD
 import Insert from './dorm/Insert';
 import AInsert from './amenity/AInsert';
 import RInsert from './room/RInsert';
@@ -59,6 +60,15 @@ const router = createBrowserRouter(
                     <Route path="ReviewListModal" element={<ReviewListModal/>}/>
                 </Route>
 
+=======
+import Search from "./components/serch/Search";
+import SearchResult from "./components/serch/SearchResult";
+
+const router = createBrowserRouter(
+        createRoutesFromElements(
+            <Route path="/" element={<Search/>}>
+                <Route element={<SearchResult/>}></Route>
+>>>>>>> 10fbdb77a769c6a6bb647ccf84274ea9b832b6ba
             </Route>
         )
     )
