@@ -1,15 +1,33 @@
-import React, {useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import DormCard from "./DormCard";
-import {format} from "date-fns";
+import { format } from "date-fns";
 import styled from "styled-components";
 
 const LoadMoreButton = styled.button`
     margin: 20px auto;
-    padding: 10px;
+    padding: 10px 20px;
     display: block;
     text-align: center;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #333;
+    }
+
+    &:active {
+        background-color: #111;
+    }
+
+    &:focus {
+        outline: none;
+    }
 `;
 
 const ListContainer = styled.div`
@@ -61,7 +79,6 @@ function List(props) {
                     setDorms(prevDorms => [...prevDorms, ...newDorms]);
                 }
 
-
                 if (newDorms.length < size || allDormsNull) {
                     setHasMore(false);
                 }
@@ -91,13 +108,13 @@ function List(props) {
     const toggleWish = async (dormId) => {
         try {
             if (!userInfo) {
-                navigate("/login", {state: {from: location}});
+                navigate("/login", { state: { from: location } });
                 return;
             }
 
             const updatedDorms = dorms.map(dorm =>
                 dorm.id === dormId
-                    ? {...dorm, isWish: !dorm.isWish}
+                    ? { ...dorm, isWish: !dorm.isWish }
                     : dorm
             );
 
@@ -108,10 +125,10 @@ function List(props) {
             console.log("targetDorm?: " + targetDorm.isWish)
 
             if (targetDorm.isWish) {
-                await axios.delete(`http://localhost:8080/wishes/${userInfo.id}/${dormId}`, {withCredentials: true});
+                await axios.delete(`http://localhost:8080/wishes/${userInfo.id}/${dormId}`, { withCredentials: true });
 
             } else {
-                await axios.post(`http://localhost:8080/wishes/${userInfo.id}/${dormId}`, {}, {withCredentials: true});
+                await axios.post(`http://localhost:8080/wishes/${userInfo.id}/${dormId}`, {}, { withCredentials: true });
             }
 
         } catch (e) {
@@ -119,7 +136,7 @@ function List(props) {
             setDorms(prevDorms =>
                 prevDorms.map(dorm =>
                     dorm.id === dormId
-                        ? {...dorm, isWish: !dorm.isWish}
+                        ? { ...dorm, isWish: !dorm.isWish }
                         : dorm
                 )
             );
@@ -144,6 +161,17 @@ function List(props) {
         }
     }, [wishList, page]);
 
+    useEffect(() => {
+        // 사용자가 로그아웃했을 때 리스트 초기화 및 isWish 상태 초기화
+        if (!userInfo?.id) {
+            const resetDorms = dorms.map(dorm => ({
+                ...dorm,
+                isWish: false // 모든 도미토리의 isWish를 false로 설정
+            }));
+            setDorms(resetDorms);
+        }
+    }, [userInfo]);
+
     const searchInfo = {
         checkIn: format(new Date(), 'yyyy-MM-dd 15:00:00'),
         checkOut: format(new Date(), 'yyyy-MM-dd 11:00:00'),
@@ -151,20 +179,20 @@ function List(props) {
     };
 
     const moveToDorm = (id) => {
-        navigate('dorm/' + id, {state: {searchInfo: searchInfo, userInfo: props.userInfo}});
+        navigate('dorm/' + id, { state: { searchInfo: searchInfo, userInfo: props.userInfo } });
     };
 
     return (
         <>
             <ListContainer>
                 {dorms.map((dorm) => (dorm.id && (
-                    <DormCard
-                        key={dorm.id}
-                        dorm={dorm}
-                        isWish={dorm.isWish}
-                        toggleWish={() => toggleWish(dorm.id)}
-                        goToDorm={() => moveToDorm(dorm.id)}
-                    />)
+                        <DormCard
+                            key={dorm.id}
+                            dorm={dorm}
+                            isWish={dorm.isWish}
+                            toggleWish={() => toggleWish(dorm.id)}
+                            goToDorm={() => moveToDorm(dorm.id)}
+                        />)
                 ))}
             </ListContainer>
 
